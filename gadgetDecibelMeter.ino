@@ -7,6 +7,7 @@ const int sampleRate = 16000;
 int adc;
 int dB, PdB; //the variable that will hold the value read from the microphone each time
 int seconds;
+int readCount = 0;
 
 char filePrefixName[50] = "sound";
 char fileSuffixName[15] = "";
@@ -33,23 +34,27 @@ void setup() {
   myFile = SD.open("data.txt", FILE_WRITE);
 }
 
-void loop(){
+void loop() {
   PdB = dB; //Store the previous of dB here
   
   adc= analogRead(MIC); //Read the ADC value from amplifer 
   //Serial.println (adc); //Print ADC for initial calculation 
   dB = (adc+83.2073) / 11.003; //Default values, calibrate using linear regression
-
+  readCount++;
   seconds = millis()/1000;
   //Serial.println(dB);
-  myFile.println(dB, seconds);
-
+  if (readCount = 10) {
+    myFile.println(dB, seconds);
+    readCount = 0;
+  }
+  
+  
   if (dB <= 75) {
     delay(100);
   }
-  if (dB > 75) {
+  
+  else {
     isRecording = true;
-
     seconds = round(millis()/1000);
     itoa(seconds, fileSuffixName, 10);
 
@@ -58,15 +63,21 @@ void loop(){
       PdB = dB;
       adc = analogRead(MIC);
       dB = (adc+83.2073) / 11.003; // Do regression values
+      readCount++;
+      
       seconds = round(millis()/1000);
-      myFile.println(dB, seconds);
-      if (dB > 75) {
-        break;
+      if (readCount = 10) { 
+        myFile.println(dB, seconds); 
+        readCount = 0;
       }
       
-      delay(100);
-    audio.stopRecording(strcat(strcat(filePrefixName, fileSuffixName), header));
+      if (dB > 75) {
+        isRecording = false;
+        break;
+      }
     }
+
+    audio.stopRecording(strcat(strcat(filePrefixName, fileSuffixName), header));
+    delay(100);
   }
-  delay(100);
 }
