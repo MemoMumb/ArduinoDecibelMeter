@@ -38,9 +38,9 @@ void loop() {
   PdB = dB; //Store the previous of dB here
   
   adc= analogRead(MIC); //Read the ADC value from amplifer 
-  //Serial.println (adc); //Print ADC for initial calculation 
+  //Serial.println (adc); 
   dB = (adc+83.2073) / 11.003; //Default values, calibrate using linear regression
-  readCount++;
+  readCount++; // Record only every tenth value
   seconds = millis()/1000;
   //Serial.println(dB);
   if (readCount = 10) {
@@ -53,13 +53,13 @@ void loop() {
     delay(100);
   }
   
-  else {
-    isRecording = true;
+  if (dB > 75) { //Record from microphone if the decibel value is above 75
+    isRecording = true; 
     seconds = round(millis()/1000);
     itoa(seconds, fileSuffixName, 10);
 
-    audio.startRecording(strcat(strcat(filePrefixName, fileSuffixName), header), sampleRate, MIC);
-    while (isRecording) {
+    audio.startRecording(strcat(strcat(filePrefixName, fileSuffixName), header), sampleRate, MIC); //Start recording, the file name will be "Sound[seconds].wav"
+    while (isRecording) { //constantly check if the decibel values are above 75
       PdB = dB;
       adc = analogRead(MIC);
       dB = (adc+83.2073) / 11.003; // Do regression values
@@ -71,7 +71,7 @@ void loop() {
         readCount = 0;
       }
       
-      if (dB > 75) {
+      if (dB > 75) { //if decibel values are no longer above 75, stop recording
         isRecording = false;
         break;
       }
