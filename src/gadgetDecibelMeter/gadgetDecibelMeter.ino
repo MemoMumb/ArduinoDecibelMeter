@@ -5,10 +5,11 @@ const int MIC = 0; //the microphone amplifier output is connected to pin A0
 int adc = 0;
 int seconds = 0;
 
-double measureFor = 172800; //Overall sample time duration
+double measureFor = 43200; //Overall sample time duration
 int sampleDur = 200; //Set sampling duration as 200 ms
 int maxADC = 0;
 unsigned long start;
+unsigned long lastOpen; 
 
 bool writeTo = true;
 
@@ -28,6 +29,7 @@ void setup() {
   
   Serial.println("initialization done.");
   myFile = SD.open("data.txt", FILE_WRITE);
+  lastOpen = millis();
 }
 
 void loop() {
@@ -40,6 +42,12 @@ void loop() {
   }
 
   maxADC = 0;
+if (millis() - lastOpen >= 600000) { //Every 10 minutes, save to microSD card
+    myFile.close();
+    myFile = SD.open("data.txt", FILE_WRITE);
+    lastOpen = millis();
+    Serial.println("Clock reset!");
+}
   
   if (seconds > measureFor) {
     myFile.close();
