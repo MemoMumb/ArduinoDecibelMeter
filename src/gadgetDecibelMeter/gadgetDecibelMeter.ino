@@ -20,16 +20,16 @@ void setup() {
     ;
   }
 
-  pinMode(MIC, INPUT);
-  if (!SD.begin(10)) {  
-    Serial.println("initialization failed!");
-    while (1)
-      ;
-  }
+  //pinMode(MIC, INPUT);
+  //if (!SD.begin(10)) {  
+  //  Serial.println("initialization failed!");
+  //  while (1)
+  //    ;
+  //}
 
-  Serial.println("initialization done.");
-  myFile = SD.open("data.txt", FILE_WRITE);
-  lastOpen = millis();
+  //Serial.println("initialization done.");
+  //myFile = SD.open("data.txt", FILE_WRITE);
+  //lastOpen = millis();
 }
 
 void loop() {
@@ -42,12 +42,12 @@ void loop() {
   }
 
   maxADC = 0;
-  if (millis() - lastOpen >= 120000) {  //Every 2 minutes, save to microSD card
-    myFile.close();
-    myFile = SD.open("data.txt", FILE_WRITE);
-    lastOpen = millis();
-    Serial.println("Clock reset!");
-  }
+  //if (millis() - lastOpen >= 120000) {  //Every 2 minutes, save to microSD card
+  //  myFile.close();
+  //  myFile = SD.open("data.txt", FILE_WRITE);
+  //  lastOpen = millis();
+  //  Serial.println("Clock reset!");
+  //}
 }
 
 
